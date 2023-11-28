@@ -12,7 +12,7 @@ from scipy.stats import skew
 import os
 import sys
 
-plt.rcParams["figure.figsize"] = (12,8)
+plt.rcParams["figure.figsize"] = (14,8)
 plt.rcParams['font.size'] = 14
 
 
@@ -63,7 +63,7 @@ def deStandard(data,mean,std):
 def get_violin(df,col,title,saveStr):
     mean_of_means = list(df[['Month',col]].groupby(by= 'Month',as_index=False).mean()[col])
 
-    plt.figure(figsize= (12,8))
+    plt.figure(figsize= (14,8))
     ax=sns.violinplot(data=df, y=col, x="Month",palette=month_hex,inner= 'quart')
     plt.xlabel('')
     plt.ylabel('Mean Temp (°C)')
@@ -135,14 +135,14 @@ if __name__ == '__main__':
     df= import_data()
 
 
-    outDir = homeDir+'/monthly_temp_dist'
+    outDir = homeDir+'/monthly'
 
     isExist = os.path.exists(outDir)
     if isExist == False:
         os.makedirs(outDir)
     os.chdir(outDir)
 
-    print('saving files in ', outDir)
+    print('Saving Monthly files in ', outDir)
 
     get_violin(df,'meanTemp','Mean Temp Dist per Month','mean_monthly_dist')
     get_violin(df,'minTemp','Min. Temp Dist per Month','min_monthly_dist')

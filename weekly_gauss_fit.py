@@ -12,7 +12,7 @@ from scipy.optimize import curve_fit
 from scipy import asarray as ar,exp
 
 
-plt.rcParams["figure.figsize"] = (12,8)
+plt.rcParams["figure.figsize"] = (14,8)
 plt.rcParams['font.size'] = 14
 
 purp = '#440154'
@@ -191,14 +191,14 @@ if __name__ == '__main__':
 
     homeDir= sys.path[0]
     os.chdir(homeDir)
-    outDir = homeDir+'/gauss_fit_out_test'
+    outDir = homeDir+'/weekly'
 
     isExist = os.path.exists(outDir)
     if isExist == False:
         os.makedirs(outDir)
     os.chdir(outDir)
 
-    print('saving files in ', outDir)
+    print('Saving Weekly files in ', outDir)
 
     plot_mean_std(maxTemp_week_mean,maxTemp_week_std, 'Max')
     plot_mean_std(minTemp_week_mean,minTemp_week_std, 'Min')
