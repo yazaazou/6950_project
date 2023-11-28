@@ -65,9 +65,15 @@ def Gauss(x, A, B,H):
     y = H + A*np.exp(-1*B*x**2) 
     return y
 
-def deNorm(data,xmin,xmax):
-    d= (data*(xmax-xmin))+xmin
-    return d
+# def deNorm(data,xmin,xmax):
+#     d= (data*(xmax-xmin))+xmin
+#     return d
+
+
+def deNorm(norm, xmin,xmax):
+    a= np.min(norm)
+    b= np.max(norm)
+    return ( ((norm-a) * ( xmax-xmin ))/(b-a) ) + xmin
 
 def deStandard(data,mean,std):
     return data * std + mean
@@ -78,11 +84,19 @@ def plot_mean_std(dfMean,dfStd, title):
 
     plt.figure(figsize=(14,8))
 
-    plt.plot(dfMean.iloc[:,1],'*-',label='mean',color=purp,linewidth=2.5)
-    plt.plot(dfStd.iloc[:,1],'*-',label='std',color=teal,linewidth=2.5)
+    xlen= len(dfMean.iloc[:,1])
+    
+    xdata= norm(range(0,xlen),0,48)
+
+    plt.plot(xdata,dfMean.iloc[:,1],'*-',label='mean',color=purp,linewidth=2.5)
+    plt.plot(xdata,dfStd.iloc[:,1],'*-',label='std',color=teal,linewidth=2.5)
 
     plt.ylabel('Temp (°C)')
-    plt.xticks(ticks=[1,13,24,36,49], labels=['January','April','June','September','December' ])
+    
+    plt.xticks(ticks=[0,4,8,12,16,20,24,28,32,36,40,44,48], labels=['Jan.','Feb.','Mar.','Apr.','May','June','July','Aug.','Sept.','Oct.','Nov.','Dec.',''])
+    plt.grid(axis="x",color='black', linestyle='--', linewidth=0.8,alpha= 0.5)
+    
+    #plt.
 
     pltStr= title+ ' Temperature'
     saveStr= title+'temp_mean_VS_std.pdf'
@@ -127,35 +141,38 @@ def fit_gauss(data,title):
     x=data.iloc[:,0]
     y=data.iloc[:,1]
 
-    xmean= np.mean(x)
-    xstd= np.std(x)
+    xmin=np.min(x)
+    xmax= np.max(x)
 
+    xdata= norm(x,-2,2)
 
     ymin=np.min(y)
     ymax=np.max(y)
-    
-    xdata= standardize(x)
+
     ydata= norm(y,0,1)
 
-
     parameters, covariance = curve_fit(Gauss, xdata, ydata) 
-    
+
     fit_A = parameters[0] 
     fit_B = parameters[1]
     fit_H = parameters[2] 
-    
+
     fit_y = Gauss(xdata, fit_A, fit_B,fit_H) 
 
-    xdata= deStandard(xdata,xmean,xstd)
+    xdata= deNorm(xdata, xmin,xmax)
     ydata= deNorm(ydata, ymin,ymax)
     fit_y= deNorm(fit_y,ymin,ymax)
 
-    plt.figure(figsize=(10,7))
+    plt.figure(figsize=(14,8))
     plt.title(str(title))
-    plt.plot(xdata, ydata, '-*', label='Original Data',color=purp,linewidth=2.5) 
-    plt.plot(xdata, fit_y, '-', label='Gaussian fit',color= teal,linewidth=2.5) 
 
-    plt.xticks(ticks=[1,13,24,36,49], labels=['January','April','June','September','December' ])
+    plt.plot(norm(xdata,0,48), ydata, '-*', label='Original Data',color=purp,linewidth=2.5) 
+    plt.plot(norm(xdata,0,48), fit_y, '-', label='Gaussian fit',color= teal,linewidth=2.5) 
+
+    plt.xticks(ticks=[0,4,8,12,16,20,24,28,32,36,40,44,48], labels=['Jan.','Feb.','Mar.','Apr.','May','June','July','Aug.','Sept.','Oct.','Nov.','Dec.',''])
+    plt.grid(axis="x",color='black', linestyle='--', linewidth=0.8,alpha= 0.5)
+    
+    
     plt.ylabel('Temp (°C)')
     
     saveStr= 'temp'+title+ '_Gauss.pdf'
@@ -174,7 +191,7 @@ if __name__ == '__main__':
 
     homeDir= sys.path[0]
     os.chdir(homeDir)
-    outDir = homeDir+'/gauss_fit_out'
+    outDir = homeDir+'/gauss_fit_out_test'
 
     isExist = os.path.exists(outDir)
     if isExist == False:
