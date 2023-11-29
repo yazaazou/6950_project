@@ -1,5 +1,5 @@
 import pytest
-import weekly_gauss_fit as wgf
+import weekly_temp_dist as wgf
 import numpy as np
 
 
